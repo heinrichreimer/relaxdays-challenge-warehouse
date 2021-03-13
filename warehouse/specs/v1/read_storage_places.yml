@@ -21,12 +21,16 @@ responses:
     schema:
       type: array
       items:
-        $ref: "#/definitions/StoragePlace"
+        $ref: "#/definitions/StoragePlaceV1"
 definitions:
-  StoragePlace:
+  StoragePlaceV1:
     type: object
     required:
-      - name
+      - standort
+      - lagerabschnitt
+      - reihe
+      - platz
+      - hoehe
       - articleID
       - bestand
     properties:

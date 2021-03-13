@@ -12,12 +12,16 @@ responses:
   default:
     description: "Storage place."
     schema:
-      $ref: "#/definitions/StoragePlace"
+      $ref: "#/definitions/StoragePlaceV1"
 definitions:
-  StoragePlace:
+  StoragePlaceV1:
     type: object
     required:
-      - name
+      - standort
+      - lagerabschnitt
+      - reihe
+      - platz
+      - hoehe
       - articleID
       - bestand
     properties:

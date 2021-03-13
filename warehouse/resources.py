@@ -1,6 +1,4 @@
 from flask import jsonify, request
-from flask_restful import Resource
-from flasgger import swag_from
 from typing import Dict, List
 from warehouse.storage_place import StoragePlace
 from warehouse.parsers import (
@@ -9,13 +7,6 @@ from warehouse.parsers import (
     format_storage_place,
 )
 from warehouse.error import ApiError
-from warehouse.specs import (
-    create_storage_place_spec,
-    read_storage_place_spec,
-    update_storage_place_spec,
-    delete_storage_place_spec,
-    read_storage_places_spec,
-)
 from warehouse.version import Version
 
 
@@ -23,7 +14,7 @@ def _success():
     return jsonify({"message": "Success."})
 
 
-class StoragePlaceResource(Resource):
+class StoragePlaceApi:
     storage: Dict[str, StoragePlace]
     version: Version
 
@@ -35,7 +26,6 @@ class StoragePlaceResource(Resource):
         self.storage = storage
         self.version = version
 
-    @swag_from(create_storage_place_spec(), validation=True)
     def post(self):
         name = parse_storage_place_name(request.json, self.version)
         if name in self.storage:
@@ -44,7 +34,6 @@ class StoragePlaceResource(Resource):
         self.storage[storage_place.name] = storage_place
         return _success()
 
-    @swag_from(read_storage_place_spec())
     def get(self):
         if "x" not in request.args:
             raise ApiError("Must specify name.")
@@ -54,8 +43,7 @@ class StoragePlaceResource(Resource):
         storage_place = self.storage[name]
         return jsonify(format_storage_place(storage_place, self.version))
 
-    @swag_from(update_storage_place_spec(), validation=True)
-    def put(self: str):
+    def put(self):
         name = parse_storage_place_name(request.json, self.version)
         if name not in self.storage:
             raise ApiError("Storage place does not exist.")
@@ -68,7 +56,6 @@ class StoragePlaceResource(Resource):
         self.storage[storage_place.name] = storage_place
         return _success()
 
-    @swag_from(delete_storage_place_spec())
     def delete(self):
         if "x" not in request.args:
             raise ApiError("Must specify name.")
@@ -79,7 +66,7 @@ class StoragePlaceResource(Resource):
         return _success()
 
 
-class StoragePlacesResource(Resource):
+class StoragePlacesApi:
     storage: Dict[str, StoragePlace]
     version: Version
 
@@ -91,7 +78,6 @@ class StoragePlacesResource(Resource):
         self.storage = storage
         self.version = version
 
-    @swag_from(read_storage_places_spec())
     def get(self):
         count = int(request.args["n"])
         name = request.args["x"] if "x" in request.args else None

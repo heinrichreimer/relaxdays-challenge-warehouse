@@ -6,15 +6,19 @@ parameters:
     required: true
     description: "Storage place that should be updated."
     schema:
-      $ref: "#/definitions/StoragePlace"
+      $ref: "#/definitions/StoragePlaceV1"
 responses:
   default:
     description: "Successful operation."
 definitions:
-  StoragePlace:
+  StoragePlaceV1:
     type: object
     required:
-      - name
+      - standort
+      - lagerabschnitt
+      - reihe
+      - platz
+      - hoehe
     properties:
       standort:
         type: string

@@ -1,11 +1,18 @@
 from flask import Flask
-from flask_restful import Api
-from flasgger import Swagger
+from flask_restful import Api, Resource
+from flasgger import Swagger, swag_from
 from typing import Dict
 from warehouse.storage_place import StoragePlace
 from warehouse.error import ApiError
-from warehouse.resources import StoragePlaceResource, StoragePlacesResource
+from warehouse.resources import StoragePlaceApi, StoragePlacesApi
 from warehouse.version import Version
+from warehouse.specs import (
+    create_storage_place_spec,
+    read_storage_place_spec,
+    update_storage_place_spec,
+    delete_storage_place_spec,
+    read_storage_places_spec,
+)
 
 app = Flask(__name__)
 api = Api(app)
@@ -20,24 +27,60 @@ def handle_api_error(error: ApiError):
 
 
 @api.resource('/storagePlace')
-class StoragePlaceVO(StoragePlaceResource):
-    def __init__(self):
-        super().__init__(storage, Version.V0)
+class StoragePlaceVO(Resource):
+    api = StoragePlaceApi(storage, Version.V0)
+
+    @swag_from(create_storage_place_spec(Version.V0), validation=True)
+    def post(self):
+        return self.api.post()
+
+    @swag_from(read_storage_place_spec(Version.V0))
+    def get(self):
+        return self.api.get()
+
+    @swag_from(update_storage_place_spec(Version.V0), validation=True)
+    def put(self):
+        return self.api.put()
+
+    @swag_from(delete_storage_place_spec(Version.V0))
+    def delete(self):
+        return self.api.delete()
 
 
 @api.resource('/storagePlaces')
-class StoragePlacesVO(StoragePlacesResource):
-    def __init__(self):
-        super().__init__(storage, Version.V0)
+class StoragePlacesVO(Resource):
+    api = StoragePlacesApi(storage, Version.V0)
+
+    @swag_from(read_storage_places_spec(Version.V0))
+    def get(self):
+        return self.api.get()
 
 
 @api.resource('/v1/storagePlace')
-class StoragePlaceV1(StoragePlaceResource):
-    def __init__(self):
-        super().__init__(storage, Version.V1)
+class StoragePlaceV1(Resource):
+    api = StoragePlaceApi(storage, Version.V1)
+
+    @swag_from(create_storage_place_spec(Version.V1), validation=True)
+    def post(self):
+        return self.api.post()
+
+    @swag_from(read_storage_place_spec(Version.V1))
+    def get(self):
+        return self.api.get()
+
+    @swag_from(update_storage_place_spec(Version.V1), validation=True)
+    def put(self):
+        return self.api.put()
+
+    @swag_from(delete_storage_place_spec(Version.V1))
+    def delete(self):
+        return self.api.delete()
 
 
 @api.resource('/v1/storagePlaces')
-class StoragePlacesV1(StoragePlacesResource):
-    def __init__(self):
-        super().__init__(storage, Version.V1)
+class StoragePlacesV1(Resource):
+    api = StoragePlacesApi(storage, Version.V1)
+
+    @swag_from(read_storage_places_spec(Version.V1))
+    def get(self):
+        return self.api.get()
