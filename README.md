@@ -27,7 +27,7 @@ cd relaxdays-challenge-warehouse/
 1. Start the Docker container:
 
     ```shell script
-    docker run -v $(pwd):/app -p 5000:5000 -it relaxdays-challenge-warehouse
+    docker run -p 5000:5000 -it relaxdays-challenge-warehouse
     ```
 
 1. The app is now running on [`localhost:5000`](http://localhost:5000/)
