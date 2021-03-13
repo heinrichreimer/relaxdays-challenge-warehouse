@@ -1,0 +1,53 @@
+Get storage places cursor-paginated.
+---
+parameters:
+  - name: x
+    in: query
+    required: false
+    description: "Storage place after which storage places should be returned."
+    schema:
+      type: string
+      example: "HAL-12;2;3;1"
+  - name: n
+    in: query
+    required: true
+    description: "Number of storage places to be returned."
+    schema:
+      type: int
+      example: 100
+responses:
+  default:
+    description: "List of storage places."
+    schema:
+      type: array
+      items:
+        $ref: "#/definitions/StoragePlace"
+definitions:
+  StoragePlace:
+    type: object
+    required:
+      - name
+      - articleID
+      - bestand
+    properties:
+      standort:
+        type: string
+        example: "HAL"
+      lagerabschnitt:
+        type: integer
+        example: 12
+      reihe:
+        type: integer
+        example: 2
+      platz:
+        type: integer
+        example: 3
+      hoehe:
+        type: integer
+        example: 1
+      articleID:
+        type: integer
+        example: 10010020
+      bestand:
+        type: integer
+        example: 20
