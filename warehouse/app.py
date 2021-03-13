@@ -59,7 +59,7 @@ def handle_api_error(error):
 
 
 class StoragePlaceResource(Resource):
-    @swag_from("create_storage_place.yml", validation=True)
+    @swag_from("specs/create_storage_place.yml", validation=True)
     def post(self):
         name = parse_storage_place_name(request.json)
         if name in storage:
@@ -68,14 +68,14 @@ class StoragePlaceResource(Resource):
         storage[storage_place.name] = storage_place
         return ""
 
-    @swag_from("read_storage_place.yml", validation=True)
+    @swag_from("specs/read_storage_place.yml", validation=True)
     def get(self, name: str):
         if name not in storage:
             raise ApiError("Storage place does not exist.")
         storage_place = storage[name]
         return jsonify(format_storage_place(storage_place))
 
-    @swag_from("update_storage_place.yml", validation=True)
+    @swag_from("specs/update_storage_place.yml", validation=True)
     def put(self: str):
         name = parse_storage_place_name(request.json)
         if name not in storage:
@@ -85,7 +85,7 @@ class StoragePlaceResource(Resource):
         storage[storage_place.name] = storage_place
         return ""
 
-    @swag_from("delete_storage_place.yml", validation=True)
+    @swag_from("specs/delete_storage_place.yml", validation=True)
     def delete(self, name):
         if name not in storage:
             raise ApiError("Storage place does not exist.")
