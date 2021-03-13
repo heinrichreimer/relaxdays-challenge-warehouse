@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, Response
 
 
 class ApiError(Exception):
@@ -19,3 +19,12 @@ class ApiError(Exception):
         response = jsonify(self.to_dict())
         response.status_code = self.status_code
         return response
+
+
+class AuthError(Exception):
+    def to_response(self):
+        return Response(
+            "Invalid credentials",
+            401,
+            {"WWW-Authenticate": "Basic realm=\"Login Required\""}
+        )

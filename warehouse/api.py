@@ -6,7 +6,7 @@ from warehouse.parsers import (
     parse_storage_place_name,
     format_storage_place,
 )
-from warehouse.error import ApiError
+from warehouse.error import ApiError, AuthError
 from warehouse.version import Version
 from datetime import datetime
 
@@ -16,20 +16,33 @@ def _success():
 
 
 def _log_legacy_request(version: Version):
-    if version < Version.V2:
-        now = datetime.now().strftime("%d/%b/%Y:%H:%M:%S")
-        forward = forward = request.headers.get("X-Forwarded-For", default="")
-        print(
-            "DeprecatedCall@CC-VOL1: "
-            "{ip} {time} {verb} {url} "
-            "X-Forwarded-For={forward}".format(
-                ip=request.remote_addr,
-                time=now,
-                verb=request.method,
-                url=request.url,
-                forward=forward,
-            )
+    if version >= Version.V3:
+        return
+    now = datetime.now().strftime("%d/%b/%Y:%H:%M:%S")
+    forward = forward = request.headers.get("X-Forwarded-For", default="")
+    print(
+        "DeprecatedCall@CC-VOL1: "
+        "{ip} {time} {verb} {url} "
+        "X-Forwarded-For={forward}".format(
+            ip=request.remote_addr,
+            time=now,
+            verb=request.method,
+            url=request.url,
+            forward=forward,
         )
+    )
+
+
+def _auth(version: Version):
+    if version < Version.V3:
+        return
+    if (request.authorization and
+            "username" in request.authorization and
+            request.authorization["username"] == "user" and
+            "password" in request.authorization and
+            request.authorization["password"] == "pass"):
+        return
+    raise AuthError()
 
 
 class StoragePlaceApi:
@@ -46,6 +59,7 @@ class StoragePlaceApi:
 
     def post(self):
         _log_legacy_request(self.version)
+        _auth(self.version)
 
         name = parse_storage_place_name(request.json, self.version)
         if name in self.storage:
@@ -56,6 +70,7 @@ class StoragePlaceApi:
 
     def get(self):
         _log_legacy_request(self.version)
+        _auth(self.version)
 
         if "x" not in request.args:
             raise ApiError("Must specify name.")
@@ -67,6 +82,7 @@ class StoragePlaceApi:
 
     def put(self):
         _log_legacy_request(self.version)
+        _auth(self.version)
 
         name = parse_storage_place_name(request.json, self.version)
         if name not in self.storage:
@@ -82,6 +98,7 @@ class StoragePlaceApi:
 
     def delete(self):
         _log_legacy_request(self.version)
+        _auth(self.version)
 
         if "x" not in request.args:
             raise ApiError("Must specify name.")
@@ -106,6 +123,7 @@ class StoragePlacesApi:
 
     def get(self):
         _log_legacy_request(self.version)
+        _auth(self.version)
 
         count = int(request.args["n"])
         name = request.args["x"] if "x" in request.args else None
@@ -148,6 +166,7 @@ class StoragePlacesForArticleApi:
 
     def get(self):
         _log_legacy_request(self.version)
+        _auth(self.version)
 
         article_id = int(request.args["x"])
 

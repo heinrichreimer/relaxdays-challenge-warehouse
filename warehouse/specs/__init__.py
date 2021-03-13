@@ -4,10 +4,16 @@ from warehouse.version import Version
 
 def _base(version: Version):
     base = Path(__file__).parent
-    if version == Version.V1:
+    if version == Version.V0:
+        pass
+    elif version == Version.V1:
         base = base / "v1"
     elif version == Version.V2:
         base = base / "v2"
+    elif version == Version.V3:
+        base = base / "v3"
+    else:
+        raise "Can't find API spec."
     return base
 
 
