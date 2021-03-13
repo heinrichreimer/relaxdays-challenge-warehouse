@@ -7,12 +7,14 @@ parameters:
     description: "Storage place after which storage places should be returned."
     schema:
       type: string
+      example: "HAL-12;2;3;1"
   - name: n
     in: query
     required: true
     description: "Number of storage places to be returned."
     schema:
       type: int
+      example: 100
 responses:
   default:
     description: "List of storage places."
