@@ -1,0 +1,29 @@
+Create a new storage place.
+---
+parameters:
+  - name: body
+    in: body
+    required: true
+    description: "Storage place that should be created."
+    schema:
+      $ref: "#/definitions/StoragePlace"
+responses:
+  default:
+    description: "Successful operation."
+definitions:
+  StoragePlace:
+    type: object
+    required:
+      - name
+      - articleID
+      - bestand
+    properties:
+      name:
+        type: string
+        example: "HAL-12;2;3;1"
+      articleID:
+        type: integer
+        example: 10010020
+      bestand:
+        type: integer
+        example: 20

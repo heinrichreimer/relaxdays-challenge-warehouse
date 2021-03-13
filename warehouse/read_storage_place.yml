@@ -1,0 +1,31 @@
+Read a storage place.
+---
+parameters:
+  - name: x
+    in: query
+    required: true
+    description: "Storage place name that should be read."
+    schema:
+      type: string
+responses:
+  default:
+    description: "Storage place."
+    schema:
+      $ref: "#/definitions/StoragePlace"
+definitions:
+  StoragePlace:
+    type: object
+    required:
+      - name
+      - articleID
+      - bestand
+    properties:
+      name:
+        type: string
+        example: "HAL-12;2;3;1"
+      articleID:
+        type: integer
+        example: 10010020
+      bestand:
+        type: integer
+        example: 20

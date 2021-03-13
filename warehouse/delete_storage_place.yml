@@ -1,0 +1,12 @@
+Delete a storage place.
+---
+parameters:
+  - name: x
+    in: query
+    required: true
+    description: "Storage place name that should be deleted."
+    schema:
+      type: string
+responses:
+  default:
+    description: "Successful operation."
