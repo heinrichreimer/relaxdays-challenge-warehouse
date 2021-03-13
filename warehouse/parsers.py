@@ -9,14 +9,29 @@ def parse_storage_place(
     version: Version,
     default: StoragePlace = None
 ) -> StoragePlace:
-    return StoragePlace(
-        parse_storage_place_name(storage_place, version),
+    article_id = (
         storage_place["articleID"]
         if "articleID" in storage_place
-        else default.article_id,
+        else default.article_id
+    )
+    stock = (
         storage_place["bestand"]
         if "bestand" in storage_place
-        else default.stock,
+        else default.stock
+    )
+    if version >= Version.V2:
+        capacity = (
+            storage_place["kapazitaet"]
+            if "kapazitaet" in storage_place
+            else default.capacity
+        )
+    else:
+        capacity = stock
+    return StoragePlace(
+        parse_storage_place_name(storage_place, version),
+        article_id,
+        stock,
+        capacity
     )
 
 
@@ -24,7 +39,7 @@ def parse_storage_place_name(
     storage_place: Dict,
     version: Version,
 ) -> str:
-    if version == Version.V1:
+    if version >= Version.V1:
         location = storage_place["standort"]
         section = storage_place["lagerabschnitt"]
         row = storage_place["reihe"]
@@ -51,6 +66,10 @@ def format_storage_place(
         "bestand": storage_place.stock,
     }
     result.update(name)
+
+    if (version >= Version.V2):
+        result["kapazitaet"] = storage_place.capacity
+
     return result
 
 
@@ -58,7 +77,7 @@ def format_storage_place_name(
     storage_place: StoragePlace,
     version: Version
 ) -> Dict:
-    if version == Version.V1:
+    if version >= Version.V1:
         match = fullmatch(r"(\w+)-(\d+);(\d+);(\d+);(\d+)", storage_place.name)
         return {
             "standort": match.group(1),

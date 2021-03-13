@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class Version(Enum):
-    V0 = "v0"
-    V1 = "v1"
-    V2 = "v2"
+class Version(IntEnum):
+    V0 = 0
+    V1 = 1
+    V2 = 2
