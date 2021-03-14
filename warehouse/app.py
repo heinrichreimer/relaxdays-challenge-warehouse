@@ -7,7 +7,8 @@ from warehouse.error import ApiError, AuthError
 from warehouse.api import (
     StoragePlaceApi,
     StoragePlacesApi,
-    StoragePlacesForArticleApi
+    StoragePlacesForArticleApi,
+    StoragePlacesAtLocationApi
 )
 from warehouse.version import Version
 from warehouse.specs import (
@@ -16,7 +17,8 @@ from warehouse.specs import (
     update_storage_place_spec,
     delete_storage_place_spec,
     read_storage_places_spec,
-    read_storage_places_for_article_spec
+    read_storage_places_for_article_spec,
+    read_storage_places_at_location
 )
 
 app = Flask(__name__)
@@ -177,5 +179,14 @@ class StoragePlacesForArticleV3(Resource):
     api = StoragePlacesForArticleApi(storage, Version.V3)
 
     @swag_from(read_storage_places_for_article_spec(Version.V3))
+    def get(self):
+        return self.api.get()
+
+
+@api.resource("/v3/storagePlacesAtLocation")
+class StoragePlacesAtLocationApiV3(Resource):
+    api = StoragePlacesAtLocationApi(storage, Version.V3)
+
+    @swag_from(read_storage_places_at_location(Version.V3))
     def get(self):
         return self.api.get()

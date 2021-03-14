@@ -189,3 +189,53 @@ class StoragePlacesForArticleApi:
             result
         ))
         return jsonify(result)
+
+
+class StoragePlacesAtLocationApi:
+    storage: Dict[str, StoragePlace]
+    version: Version
+
+    def __init__(
+        self,
+        storage: Dict[str, StoragePlace],
+        version: Version
+    ):
+        self.storage = storage
+        self.version = version
+
+    def get(self):
+        _log_legacy_request(self.version)
+        _auth(self.version)
+
+        location = request.args["l"]
+        count = int(request.args["n"])
+        name = request.args["x"] if "x" in request.args else None
+
+        result: List[StoragePlace] = list(self.storage.values())
+
+        # Filter location.
+        result = list(filter(
+            lambda storage_place: storage_place.name.split("-")[0] == location,
+            result
+        ))
+
+        # Filter names that come lexicographically
+        # after the given name.
+        if name:
+            result = list(filter(
+                lambda storage_place: storage_place.name > name,
+                result
+            ))
+
+        result.sort(
+            key=lambda storage_place: storage_place.name
+        )
+        result = result[0:count]
+        result = list(map(
+            lambda storage_place: format_storage_place(
+                storage_place,
+                self.version
+            ),
+            result
+        ))
+        return jsonify(result)

@@ -41,3 +41,9 @@ def read_storage_places_for_article_spec(version: Version):
     if version < Version.V2:
         raise "Endpoint not available"
     return _base(version) / "read_storage_places_for_article.yml"
+
+
+def read_storage_places_at_location(version: Version):
+    if version < Version.V3:
+        raise "Endpoint not available"
+    return _base(version) / "read_storage_places_at_location.yml"
